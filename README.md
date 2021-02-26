@@ -1,3 +1,2 @@
 # memo
-Atilla
-Armagan
+Atilla Kaan Tanyeri
