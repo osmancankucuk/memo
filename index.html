@@ -10,22 +10,33 @@
 <body>
   <div id="app">
     <div class="container">
-    <h2>Gunluk pratik</h2>
-      <div class="row">
+    <h4>Choose category</h4>
+    <select name="" id="" v-model="curCategory">
+      <option value="">Choose</option>
+      <option value="history">History</option>
+      <option value="geography">Geography</option>
+      <option value="science">Science</option>
+      <option value="cars">Cars</option>
+    </select>
+      <div class="row" v-if="!finished && curCategory">
+        <h2>Gunluk pratik</h2>
         <div class="col-4">
           <div class="card mb-3">
-            <div class="card-body " v-if="!finished">
-              <p class="card-text">{{ questions[index].q }}</p>
-              <p v-if="isRevealed">{{ questions[index].a }}</p>
+            <div class="card-body">
+              <p class="card-text">{{ questions[curCategory][index[curCategory]].q }}</p>
+              <p v-if="isRevealed">{{ questions[curCategory][index[curCategory]].a }}</p>
               <button class="btn btn-primary" @click="reveal" v-if="!isRevealed">Goster</button>
               <button class="btn btn-success" v-show="isRevealed" @click="remembered">Hatirladim</button>
               <button class="btn btn-danger" v-show="isRevealed" @click="notRemembered">Hatirlayamadim</button>
             </div>
-            <div class="card-body" v-if="finished">
-              Gunluk pratigini tamamladin
-            </div>
           </div>
         </div>
+      </div>
+      <div class="card-body" v-if="finished">
+        Gunluk pratigini tamamladin
+      </div>
+      <div class="card-body" v-if="allDone">
+        Butun kategorileri tamamladin
       </div>
     </div>
   </div>

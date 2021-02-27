@@ -4,8 +4,28 @@ var app = new Vue({
   },
   computed: {
     finished() {
-      return this.questions.length === this.index
+      if (this.curCategory === "") {
+        return false
+      }
+
+      return this.questions[this.curCategory].length === this.index[this.curCategory]
     },
+    allDone() {
+      console.log("triggered");
+      let finishedCategoryCount = 0;
+      Object.keys(this.index).forEach((key) => {
+        if (this.questions[key].length === this.index[key]) {
+          finishedCategoryCount += 1
+        }
+      })
+
+      return finishedCategoryCount === Object.keys(this.questions).length
+    }
+  },
+  watch: {
+    curCategory() {
+      this.isRevealed = false
+    }
   },
   methods: {
     reveal() {
@@ -19,23 +39,38 @@ var app = new Vue({
     },
     nextQuestion() {
       this.isRevealed = false
-      this.index += 1;
-    }
+      this.index[this.curCategory] += 1;
+    },
   },
   data() {
     return {
-      index: 0,
+      index: {
+        geography: 0,
+        history: 0,
+        science: 0,
+      },
       isRevealed: false,
-      questions: [{
-        q: "Turkiye'nin baskenti neresidir?",
-        a: "Ankara",
-      }, {
-        q: "En kalabalik ilimiz hangisidir?",
-        a: "Istanbul",
-      }, {
-        q: "En az nufusa sahip ilimiz hangisidir?",
-        a: "Bayburt",
-      }]
+      curCategory: "",
+      questions: {
+        geography: [{
+          q: "Turkiye'nin baskenti neresidir?",
+          a: "Ankara",
+        }, {
+          q: "En kalabalik ilimiz hangisidir?",
+          a: "Istanbul",
+        }, {
+          q: "En az nufusa sahip ilimiz hangisidir?",
+          a: "Bayburt",
+        }],
+        history: [{
+          q: "HS: En az nufusa sahip ilimiz hangisidir?",
+          a: "Bayburt",
+        }],
+        science: [{
+          q: "SC: En az nufusa sahip ilimiz hangisidir?",
+          a: "Bayburt",
+        }],
+      }
     }
   }
 })
