@@ -65,6 +65,9 @@ var app = new Vue({
         history: [{
           q: "HS: En az nufusa sahip ilimiz hangisidir?",
           a: "Bayburt",
+        }, {
+          q: "Tarihte Türk adıyla kurulan ilk Türk devleti hangisidir?",
+          a: "Göktürk",
         }],
         science: [{
           q: "SC: En az nufusa sahip ilimiz hangisidir?",
