@@ -12,18 +12,16 @@
     <div class="container">
       <!-- HEADERS -->
       <h2 v-if="showMainMenu">Memo'ya Hosgeldiniz<br><br></h2>
-      <h2 v-if="showSelectionMenu || isCategoryChoosed || isAnswerRevealed || !isPracticeFinished">Gunluk Pratik<br><br></h2>
-      <h2 v-if="showAddMenu">Kategori Ekle<br><br></h2>
-      <h2 v-if="showRemoveMenu">Kategori Sil<br><br></h2>
+      <h2 v-if="showSelectionMenu || isCategoryChosen || isAnswerRevealed || !isPracticeFinished">Gunluk Pratik<br><br></h2>
+      <h2 v-if="showAddMenu">Oyun Kartlarini Duzenle<br><br></h2>
       <!-- MAIN MENU -->
       <div v-if="showMainMenu" class="btn-group" role="group" aria-label="Basic mixed styles example">
-        <button type="button" class="btn btn-warning" @click="optionChoosed(1)">Kategori Sec</button>
-        <button type="button" class="btn btn-success" @click="optionChoosed(2)">Kategori Ekle</button>
-        <button type="button" class="btn btn-danger" @click="optionChoosed(3)">Kategori Sil</button>
+        <button type="button" class="btn btn-warning" @click="optionChoosed(1)">Oyuna basla</button>
+        <button type="button" class="btn btn-success" @click="optionChoosed(2)">Oyun Kartlarini Duzenle</button>
       </div>
       <!-- CATEGORY SELECTION MENU -->
       <div class="dropdown" v-if="showSelectionMenu">
-        <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="true">
+        <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
           Lutfen kategori seciniz.
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -35,76 +33,84 @@
       </div>
       <!-- CATEGORY ADD MENU -->
       <div v-if="showAddMenu">
-        <div class="input-group mb-2">
-          <span class="input-group-text" id="basic-addon1">Eklenecek Kategori Adı</span>
-          <input type="text" class="form-control" aria-describedby="button-addon2" v-model="newCategory">
+        <button type="button" class="btn btn-info" @click="editMenuOption('curr')">Mevcut Kartlari Duzenle</button>
+        <button type="button" class="btn btn-info" @click="editMenuOption('new')">Yeni Kategori Ekle</button>
+        <button class="btn btn-danger" type="button" aria-expanded="true" @click="optionChoosed(6)">Geri don</button><br><br>
+        <div class="dropdown" v-if="isEditCurrent">
+          <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Lutfen duzenlenecek kategoriyi seciniz.
+          </button>
+          <ul class="dropdown-menu">
+            <li><a v-for="name in categoryNames" class="dropdown-item" @click="selectedCategorySet(name)">{{ name }}</a></li>
+          </ul>
+          <br><br>
+          <p v-if="isEditCategoryChosen">Secilen kategori: {{ selectedCategory }}</p>
         </div>
+        <div class="input-group mb-2" v-if="!isEditCurrent">
+          <span class="input-group-text" id="basic-addon1">Kategori Adı</span>
+          <input type="text" class="form-control" placeholder="Lutfen eklenecek kategori adini giriniz." v-model="newCategoryName">
+        </div>
+        <div v-if="isEditCategoryChosen || !isEditCurrent">
         <div class="input-group mb-3">
           <span class="input-group-text">Soru</span>
-          <input type="text" class="form-control" placeholder="Lutfen soruyu giriniz" v-model="newQuestion" aria-label="Soru" >
+          <input type="text" class="form-control" placeholder="Lutfen soruyu giriniz." v-model="newQuestion" aria-label="Soru" >
           <span class="input-group-text">Cevap</span>
-          <input type="text" class="form-control" placeholder="Lutfen cevabı giriniz" v-model="newAnswer" aria-label="Cevap" >
+          <input type="text" class="form-control" placeholder="Lutfen cevabi giriniz." v-model="newAnswer" aria-label="Cevap" >
         </div>
-        <div class="d-flex justify-content-center">
-          <button class="btn btn-success" type="button" id="button-addon2" @click="addNewQuestion">
-            Yeni soru ekle
-          </button>
-          <button class="btn btn-primary" type="button" aria-expanded="false" @click="showTable">
-            Tabloyu Göster/Gizle
-          </button>
-          <button class="btn btn-danger" type="button" aria-expanded="false" @click="optionChoosed(4)">
-            Geri don
-          </button>
-        </div><br><br>
-        <table v-if="isTableShowed" class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Question</th>
-              <th scope="col">Answer</th>
-              <th scope="col">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="showFirstRow">
-              <th scope="row">...</th>
-              <td>...</td>
-              <td>...</td>
-              <td>...</td>
-            </tr>
-            <tr v-for="(item,n) in newQuestionArray">
-              <th scope="row">{{ n+1 }}</th>
-              <td>{{ item }}</td>
-              <td>{{ newAnswerArray[n] }}</td>
-              <td><button type="button" class="btn btn-dark" @click="deleteNewQuestion(item)">Delete</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <br><br>
-        <div v-if="isTableShowed" class="d-grid gap-2">
-          <button class="btn btn-primary" type="button" aria-expanded="false" @click="">
-            Kategori Ekle
-          </button>
-        </div>
-      </div>
-      <!-- CATEGORY REMOVE MENU -->
-      <div v-for="(name, n) in categoryNames" v-if="showRemoveMenu">
-        <div class="row">
-          <div class="col-3">
-            <span class="fs-3">{{ name }}</span>
-          </div>
-          <div class="col">
-            <button class="btn btn-warning" type="button" aria-expanded="false" @click="removeCategory(n)">
-              Kategori Sil
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-success" type="button" id="button-addon2" @click="addNewQuestion">
+              Yeni soru ekle
             </button>
-            <button v-if="removeMenuButtonCleanup(n)"class="btn btn-danger" type="button" aria-expanded="false" @click="optionChoosed(4)">
-              Geri don
+            <button class="btn btn-primary" type="button" aria-expanded="false" @click="showTable">
+              Tabloyu Göster/Gizle
+            </button>
+          </div><br><br>
+          <table v-if="isTableShowed" class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Soru</th>
+                <th scope="col">Cevap</th>
+                <th scope="col">Sil</th>
+              </tr>
+            </thead>
+            <tbody> 
+              <tr v-if="showFirstRow ">
+                <th scope="row">...</th>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+              </tr>
+              <!-- EDITING CURRENT CATEGORY TABLE -->
+              <tr v-if="isEditCurrent" v-for="(item,n) in categories[selectedCategory]">
+                <th scope="row">{{ n+1}}</th>
+                <td>{{ item.q }}</td>
+                <td>{{ item.a }}</td>
+                <td><button type="button" class="btn btn-dark" @click="deleteCurrentQuestion(item)">Soruyu Sil</button></td>
+              </tr>
+              <tr v-if="!isEditCurrent" v-for="(item,n) in newQuestionPool.q">
+                <th scope="row">{{ n+1 }}</th>
+                <td>{{ item }}</td>
+                <td>{{ newQuestionPool.a[n] }}</td>
+                <td><button type="button" class="btn btn-dark" @click="deleteNewQuestion(item, newQuestionPool.a[n])">Soruyu Sil</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <br><br>
+          <div v-if="isTableShowed && !isEditCurrent" class="d-grid gap-2">
+            <button class="btn btn-primary" type="button" aria-expanded="false" @click="">
+              Yeni Kategori Ekle
             </button>
           </div>
-        </div><br>
+          <div v-if="isTableShowed && isEditCurrent" class="d-grid gap-2">
+            <button class="btn btn-primary" type="button" aria-expanded="false" @click="">
+              Kategori Duzenlemeyi Onayla
+            </button>
+          </div><br><br>
+        </div>
       </div>
       <!-- DAILY PRACTICE -->
-      <div v-if="isCategoryChoosed">
+      <div v-if="isCategoryChosen">
         <h6>Seçilen Kategori: {{ selectedCategory }}</h6>
         <div class="row">
           <div class="col-6">

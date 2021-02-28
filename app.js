@@ -8,7 +8,6 @@ var app = new Vue({
         this.categoryNames = res.categoryNames;
         this.saveCategories()
         this.getCategoryNames()
-        
      })
       
   },
@@ -20,15 +19,29 @@ var app = new Vue({
         localStorage.removeItem('categories');
       }
     }
+    if(localStorage.getItem('categoryNames')) {
+      try {
+        this.categoryNames = JSON.parse(localStorage.getItem('categoryNames'));
+      } catch(e) {
+        localStorage.removeItem('categoryNames');
+      }
+    }
+  },
+  watch: {
+    isEditCurrent() {
+      this.categories = JSON.parse(localStorage.getItem('categories'));
+    },
+    isGetBack() {
+      this.categories = JSON.parse(localStorage.getItem('categories'));
+    },
   },
   computed: {
     practiceFinished() {
       console.log(this.index);
       if(!this.isPracticeFinished) {
-        
         this.index = 0
         this.isPracticeFinished = true
-        this.isCategoryChoosed = false
+        this.isCategoryChosen = false
         // console.log(this.index)
         // console.log(this.isPracticeFinished)
         return false
@@ -46,17 +59,19 @@ var app = new Vue({
         case 2:
           this.showAddMenu = true
           break;
-        case 3:
-          this.showRemoveMenu = true
-          break;
         case 4:
           this.showSelectionMenu = false
           this.showAddMenu = false
-          this.showRemoveMenu = false
           break;
         case 5:
           this.isPracticeFinished = false
-          this.correctAnswer=0;
+          this.correctAnswer = 0;
+          break;
+        case 6:
+          this.showAddMenu = false
+          this.isEditCurrent = true
+          this.isGetBack = false
+          this.isEditCategoryChosen = false
           break;
       }
       if (this.showMainMenu === true) {
@@ -77,40 +92,65 @@ var app = new Vue({
       const parsed = JSON.stringify(this.categoryNames);
       localStorage.setItem('categoryNames', parsed); 
     },
-    addCategory() {
-      if (!this.newCategory) {
-        return;
-      }
-      this.categories.push(this.newCategory);
-      this.newCategory = '';
-      this.saveCategories();
-    },
-    removeCategory(x) {
-      this.categories.splice(x, 1);
-      this.saveCategories();
-    },
     saveCategories() {
       const parsed = JSON.stringify(this.categories);
       localStorage.setItem('categories', parsed);
     },
-    addNewQuestion() {
-      if(!this.newQuestion && !this.newAnswer) { return }
-      console.log("Current Questions --> " +this.newQuestionArray)
-      console.log("Current Answers --> " +this.newAnswerArray)
-      this.newQuestionArray[this.newIndex] = this.newQuestion
-      this.newAnswerArray[this.newIndex] = this.newAnswer
+    editMenuOption(chosen) {
+      this.isTableShowed = false
+      if(chosen === "new") {
+        this.showFirstRow = true
+        this.isEditCurrent = false
+        this.isEditCategoryChosen = false
+      } else {
+        this.isEditCurrent = true
+        this.showFirstRow = false
+        this.isTableShowed = true
+      }
       this.newQuestion = ''
       this.newAnswer = ''
-      this.newIndex += 1
-      this.showFirstRow = false
-      console.log("NEW Questions --> " +this.newQuestionArray)
-      console.log("NEW Answers --> " +this.newAnswerArray)
+      this.newCategoryName = ''
     },
-    deleteNewQuestion(item) {
-      let deletedIndex = this.newQuestionArray.indexOf(item)
-      this.newQuestionArray.splice(deletedIndex,1)
-      this.newAnswerArray.splice(deletedIndex,1)
-      this.newIndex -=1
+    addNewQuestion() {
+      if(!this.newQuestion && !this.newAnswer) { return }
+      if(this.isEditCategoryChosen) {
+        this.categories[this.selectedCategory].push({})
+        this.categories[this.selectedCategory][(this.categories[this.selectedCategory].length)-1].q = this.newQuestion
+        this.categories[this.selectedCategory][(this.categories[this.selectedCategory].length)-1].a = this.newAnswer
+      } else {
+        console.log("Current Questions --> " +this.newQuestionPool.q)
+        console.log("Current Answers --> " +this.newQuestionPool.a)
+        this.newQuestionPool.q.push(this.newQuestion)
+        this.newQuestionPool.a.push(this.newAnswer)
+        console.log("NEW Questions --> " +this.newQuestionPool.q)
+        console.log("NEW Answers --> " +this.newQuestionPool.a)
+      }
+      this.newQuestion = ''
+      this.newAnswer = ''
+      this.showFirstRow = false
+    },
+    deleteCurrentQuestion(item) {
+      for (let i = 0; i < this.categories[this.selectedCategory].length; i++) {
+        if(this.categories[this.selectedCategory][i] === item)
+        var deletedIndex = i
+      }
+      console.log(deletedIndex)
+      this.categories[this.selectedCategory].splice(deletedIndex,1)
+      if(this.categories[this.selectedCategory].length === 0) {
+        this.showFirstRow = true
+      }
+    },
+    deleteNewQuestion(question, answer) {
+      let deletedIndex = this.newQuestionPool.q.indexOf(question)
+      if(deletedIndex === this.newQuestionPool.a.indexOf(answer)) {
+        this.newQuestionPool.q.splice(deletedIndex,1)
+        this.newQuestionPool.a.splice(deletedIndex,1)
+        console.log("NEW Questions --> " +this.newQuestionPool.q)
+        console.log("NEW Answers --> " +this.newQuestionPool.a)
+      }
+      if(this.newQuestionPool.q.length === 0) {
+        this.showFirstRow = true
+      }
     },
     reveal() {
       this.isAnswerRevealed = true
@@ -128,17 +168,24 @@ var app = new Vue({
       console.log(this.index);
     },
     selectedCategorySet(name) {
+      if(this.categories[name].length === 0) {
+        this.showFirstRow = true
+      } else {
+        this.showFirstRow = false
+      }
       this.selectedCategory = name
-      this.isCategoryChoosed = true
-      this.showSelectionMenu = false
-    },
-    removeMenuButtonCleanup(n) {
-      return this.categoryNames.length-1 === n
+      if(this.showAddMenu && this.isEditCurrent) {
+        this.isEditCategoryChosen = true
+        this.isTableShowed = true
+      } else {
+        this.isCategoryChosen = true
+        this.showSelectionMenu = false
+      }
     },
     showTable() {
-      if (this.isTableShowed) { 
+      if(this.isTableShowed === true) {
         this.isTableShowed = false
-      } else { 
+      } else {
         this.isTableShowed = true
       }
     }
@@ -146,21 +193,21 @@ var app = new Vue({
   data() {
     return {
       index: 0,
-      newIndex: 0,
+      isGetBack: true,
       isTableShowed: false,
       isPracticeFinished: true,
       isAnswerRevealed: false,
-      isCategoryChoosed: false,
-      showFirstRow: true,
+      isCategoryChosen: false,
+      isEditCategoryChosen: false,
+      isEditCurrent: true,
       showMainMenu: true,
+      showFirstRow: false,
       showSelectionMenu: false,
       showAddMenu: false,
-      showRemoveMenu: false,
       selectedCategory: "",
       categories: {},
       categoryNames:[],
-      newCategory: [],
-      newQuestionArray: [],
+      newQuestionPool: {"q":[],"a":[]},
       newAnswerArray: [],
       deletedItem: "",
       newQuestion: null,

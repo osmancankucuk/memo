@@ -1,26 +1,48 @@
 {
     "categories" : {
         "Spor": [{
-                "q": "Turkiye liginde yenilgisiz sampiyon olan takım hangisidir?",
+                "q": "Turkiye liginde yenilgisiz sampiyon olan takim hangisidir?",
                 "a": "Besiktas"
             }, {
                 "q": "Hangi futbolcu galatasarayda forma giymemistir?",
-                "a": "Rıdvan Dilmen"
+                "a": "Ridvan Dilmen"
             }, {
-                "q": "Rafeal Nadal hangi spor dalıyla ünlüdür?",
+                "q": "Rafeal Nadal hangi spor dalıyla unludur?",
                 "a": "Tenis"
             }],
         "Sanat": [
             {
-                "q": "Suc ve Ceza adlı romanın yazarı kimdir?",
+                "q": "Suc ve Ceza adli romanin yazari kimdir?",
                 "a": "Dostoyevski"
             }, {
-                "q": "Harf olcusu bir siir olcusu mudur?",
+                "q": "Aruz olcusu bir siir olcusu mudur?",
                 "a": "Evet"
             }, {
-                "q": "Hangisi edebiyatimizda garip akimi onculerinden Degildir?",
-                "a": "Cemal Sureya"
-            }]
+                "q": "Orhan Pamuk'un Fusun ile Kemal'i anlattigi eserin adi nedir?",
+                "a": "Masumiyet Muzesi"
+            }],
+        "Tarih": [
+            {
+                "q": "Turklerin kullandigi ilk alfabe nedir?",
+                "a": "Gokturk Alfabesi"
+            }, {
+                "q": "Adolf Hitler olmeden once ne kadar evli kalmistir?",
+                "a": "1 gun"
+            }, {
+                "q": "Osmanlı Devleti’nde bir cag kapatip bir cag acan padisah kimdir?",
+                "a": "Fatih Sultan Mehmet"
+            }],
+        "Bilim": [
+            {
+                "q": "Kutle Cekim teorisini kim bulmustur?",
+                "a": "Isaac Newton"
+            }, {
+                "q": "Hangi tur bulut formu yer seviyesindedir?",
+                "a": "Sis"
+            }, {
+                "q": "Asitin PH degeri hangi araliktadir?",
+                "a": "0-7"
+            }]  
     },
-    "categoryNames": ["Spor","Sanat"]
+    "categoryNames": ["Spor","Sanat","Tarih","Bilim"]
 }
