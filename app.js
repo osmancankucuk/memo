@@ -1,44 +1,45 @@
 var app = new Vue({
-  el: '#app',
-  created() {
-  },
+  el: "#app",
+  created() {},
   computed: {
     finished() {
       if (this.curCategory === "") {
-        return false
+        return false;
       }
 
-      return this.questions[this.curCategory].length === this.index[this.curCategory]
+      return (
+        this.questions[this.curCategory].length === this.index[this.curCategory]
+      );
     },
     allDone() {
       console.log("triggered");
       let finishedCategoryCount = 0;
       Object.keys(this.index).forEach((key) => {
         if (this.questions[key].length === this.index[key]) {
-          finishedCategoryCount += 1
+          finishedCategoryCount += 1;
         }
-      })
+      });
 
-      return finishedCategoryCount === Object.keys(this.questions).length
-    }
+      return finishedCategoryCount === Object.keys(this.questions).length;
+    },
   },
   watch: {
     curCategory() {
-      this.isRevealed = false
-    }
+      this.isRevealed = false;
+    },
   },
   methods: {
     reveal() {
-      this.isRevealed = true
+      this.isRevealed = true;
     },
     remembered() {
-      this.nextQuestion()
+      this.nextQuestion();
     },
     notRemembered() {
-      this.nextQuestion()
+      this.nextQuestion();
     },
     nextQuestion() {
-      this.isRevealed = false
+      this.isRevealed = false;
       this.index[this.curCategory] += 1;
     },
   },
@@ -52,25 +53,37 @@ var app = new Vue({
       isRevealed: false,
       curCategory: "",
       questions: {
-        geography: [{
-          q: "Turkiye'nin baskenti neresidir?",
-          a: "Ankara",
-        }, {
-          q: "En kalabalik ilimiz hangisidir?",
-          a: "Istanbul",
-        }, {
-          q: "En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-        history: [{
-          q: "HS: En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-        science: [{
-          q: "SC: En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-      }
-    }
-  }
-})
+        geography: [
+          {
+            q: "Turkiye'nin baskenti neresidir?",
+            a: "Ankara",
+          },
+          {
+            q: "En kalabalik ilimiz hangisidir?",
+            a: "Istanbul",
+          },
+          {
+            q: "En az nufusa sahip ilimiz hangisidir?",
+            a: "Bayburt",
+          },
+        ],
+        history: [
+          {
+            q: "HS: En az nufusa sahip ilimiz hangisidir?",
+            a: "Bayburt",
+          },
+        ],
+        science: [
+          {
+            q: "SC: En az nufusa sahip ilimiz hangisidir?",
+            a: "Bayburt",
+          },
+          {
+            q: "SC: En az nufusa sahip ilimiz hangisidir?",
+            a: "Bayburt",
+          },
+        ],
+      },
+    };
+  },
+});
