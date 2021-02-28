@@ -1,0 +1,26 @@
+{
+    "categories" : {
+        "Spor": [{
+                "q": "Turkiye liginde yenilgisiz sampiyon olan takım hangisidir?",
+                "a": "Besiktas"
+            }, {
+                "q": "Hangi futbolcu galatasarayda forma giymemistir?",
+                "a": "Rıdvan Dilmen"
+            }, {
+                "q": "Rafeal Nadal hangi spor dalıyla ünlüdür?",
+                "a": "Tenis"
+            }],
+        "Sanat": [
+            {
+                "q": "Suc ve Ceza adlı romanın yazarı kimdir?",
+                "a": "Dostoyevski"
+            }, {
+                "q": "Harf olcusu bir siir olcusu mudur?",
+                "a": "Evet"
+            }, {
+                "q": "Hangisi edebiyatimizda garip akimi onculerinden Degildir?",
+                "a": "Cemal Sureya"
+            }]
+    },
+    "categoryNames": ["Spor","Sanat"]
+}
