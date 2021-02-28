@@ -36,7 +36,7 @@
         <button type="button" class="btn btn-info" @click="editMenuOption('curr')">Mevcut Kartlari Duzenle</button>
         <button type="button" class="btn btn-info" @click="editMenuOption('new')">Yeni Kategori Ekle</button>
         <button class="btn btn-danger" type="button" aria-expanded="true" @click="optionChoosed(6)">Geri don</button><br><br>
-        <div class="dropdown" v-if="isEditCurrent">
+        <div class="dropdown" v-if="isEditCurrent && showEditMenu">
           <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Lutfen duzenlenecek kategoriyi seciniz.
           </button>
@@ -88,6 +88,7 @@
                 <td>{{ item.a }}</td>
                 <td><button type="button" class="btn btn-dark" @click="deleteCurrentQuestion(item)">Soruyu Sil</button></td>
               </tr>
+              <!-- EDITING NEW CATEGORY TABLE -->
               <tr v-if="!isEditCurrent" v-for="(item,n) in newQuestionPool.q">
                 <th scope="row">{{ n+1 }}</th>
                 <td>{{ item }}</td>
@@ -98,12 +99,12 @@
           </table>
           <br><br>
           <div v-if="isTableShowed && !isEditCurrent" class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" aria-expanded="false" @click="">
+            <button class="btn btn-primary" type="button" aria-expanded="false" @click="addToDb(newCategoryName)">
               Yeni Kategori Ekle
             </button>
           </div>
           <div v-if="isTableShowed && isEditCurrent" class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" aria-expanded="false" @click="">
+            <button class="btn btn-primary" type="button" aria-expanded="false" @click="saveCategories">
               Kategori Duzenlemeyi Onayla
             </button>
           </div><br><br>
@@ -114,8 +115,8 @@
         <h6>Seçilen Kategori: {{ selectedCategory }}</h6>
         <div class="row">
           <div class="col-6">
-            <div class="card mb-3">
-              <div class="card-body " v-if="!practiceFinished">
+            <div class="card mb-3" v-if="!practiceFinished">
+              <div class="card-body">
                 <p class="card-text">{{ index+1 }}) {{ categories[selectedCategory][index].q }}</p>
                 <p v-if="isAnswerRevealed">Cevap: {{ categories[selectedCategory][index].a }}</p>
                 <button class="btn btn-primary" @click="reveal" v-if="!isAnswerRevealed">Goster</button>
@@ -126,7 +127,7 @@
                 </div>
               </div>
             </div>
-              <div v-if="practiceFinished">
+              <div class="card mb-3" v-if="practiceFinished">
                 <div class="card-body" style="text-align: center;">
                   Gunluk pratigini tamamladin<br>
                   Dogru sayisi {{correctAnswer}} dir.  

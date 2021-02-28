@@ -4,10 +4,12 @@ var app = new Vue({
      fetch('./data.json')
      .then((res) => { return res.json() })
      .then((res) => {
-        this.categories = res.categories;
-        this.categoryNames = res.categoryNames;
-        this.saveCategories()
-        this.getCategoryNames()
+       if(!Object.keys(this.categories)[0]) {
+         this.categories = res.categories;
+         this.categoryNames = res.categoryNames;
+         this.saveCategories()
+         this.getCategoryNames()
+       }
      })
       
   },
@@ -72,6 +74,7 @@ var app = new Vue({
           this.isEditCurrent = true
           this.isGetBack = false
           this.isEditCategoryChosen = false
+          this.showEditMenu = false
           break;
       }
       if (this.showMainMenu === true) {
@@ -80,12 +83,27 @@ var app = new Vue({
         this.showMainMenu = true
       }
     },
+    addToDb(newName) {
+      if(!this.categoryNames.includes(newName)) {
+        this.categoryNames.push(newName)
+      }
+      this.categories[newName] = []
+      for (let i = 0; i < this.newQuestionPool.q.length; i++) {
+        this.categories[newName].push({})
+        this.categories[newName][(this.categories[newName].length)-1].q = this.newQuestionPool.q[i]
+        this.categories[newName][(this.categories[newName].length)-1].a = this.newQuestionPool.a[i]
+        console.log(this.categories[newName][i].q)
+        console.log(this.categories[newName][i].a)
+      }
+      this.saveCategoryNames()
+      this.saveCategories()
+    },
     getCategoryNames() {
       this.categoryNames = Object.keys(this.categories)
       this.saveCategoryNames()
     },
-    setCategoryName(newCategoryName, index) { 
-      this.categoryNames[index] = newCategoryName;
+    setCategoryName(newName, index) { 
+      this.categoryNames[index] = newName;
       this.saveCategoryNames()      
     },
     saveCategoryNames() {
@@ -103,6 +121,7 @@ var app = new Vue({
         this.isEditCurrent = false
         this.isEditCategoryChosen = false
       } else {
+        this.showEditMenu = true
         this.isEditCurrent = true
         this.showFirstRow = false
         this.isTableShowed = true
@@ -200,6 +219,7 @@ var app = new Vue({
       isCategoryChosen: false,
       isEditCategoryChosen: false,
       isEditCurrent: true,
+      showEditMenu: false,
       showMainMenu: true,
       showFirstRow: false,
       showSelectionMenu: false,
@@ -212,7 +232,7 @@ var app = new Vue({
       deletedItem: "",
       newQuestion: null,
       newAnswer: null,
-      newCategoryName: null,
+      newCategoryName: '',
       correctAnswer:0
     }
   }
