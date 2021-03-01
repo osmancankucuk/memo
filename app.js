@@ -4,14 +4,12 @@ var app = new Vue({
   },
   computed: {
     finished() {
-      if (this.curCategory === "") {
+      if(this.curCategory === ''){
         return false
       }
-
-      return this.questions[this.curCategory].length === this.index[this.curCategory]
+      return this.questions[this.curCategory].length === this.index[this.curCategory]         
     },
     allDone() {
-      console.log("triggered");
       let finishedCategoryCount = 0;
       Object.keys(this.index).forEach((key) => {
         if (this.questions[key].length === this.index[key]) {
@@ -28,6 +26,9 @@ var app = new Vue({
     }
   },
   methods: {
+    selectCategory(category){
+      this.curCategory = category;
+    },  
     reveal() {
       this.isRevealed = true
     },
@@ -41,36 +42,68 @@ var app = new Vue({
       this.isRevealed = false
       this.index[this.curCategory] += 1;
     },
+    openFieldsMenu(){
+      this.curCategory = '';
+    },
   },
   data() {
     return {
+      curCategory: '',
+      isRevealed: false,
       index: {
         geography: 0,
         history: 0,
-        science: 0,
+        english: 0,
+        philosophy: 0,
       },
-      isRevealed: false,
-      curCategory: "",
       questions: {
-        geography: [{
-          q: "Turkiye'nin baskenti neresidir?",
-          a: "Ankara",
-        }, {
-          q: "En kalabalik ilimiz hangisidir?",
-          a: "Istanbul",
-        }, {
-          q: "En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-        history: [{
-          q: "HS: En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-        science: [{
-          q: "SC: En az nufusa sahip ilimiz hangisidir?",
-          a: "Bayburt",
-        }],
-      }
+        geography: [
+            { q: "Türkiye kaçıncı saat dilimindedir?",
+              a: "+3",
+            }, {
+              q: "Yüz ölçümü en büyük ilimiz hangisidir?",
+              a: "Konya",
+            }, {
+              q: "En az nüfusa sahip ilimiz hangisidir?",
+              a: "Bayburt",
+            }
+        ],
+        history: [
+            {
+              q: "İstanbul'un fethi ne zamandır?",
+              a: "29 Mayıs 1453",
+            }, {
+              q: "Hz. İsa'nın doğumu kaç yılındadır?",
+              a: "0",
+            }, {
+              q: "Roma İmparatorluğu kuruluş yılı ne zamandır?",
+              a: "MÖ 27",
+            }
+        ],
+        english: [
+            {
+              q: "What does 'simultaneous' mean?",
+              a: "Eş Zamanlı",
+            }, {
+              q: "What does 'scarab' mean?",
+              a: "Bok böceği",
+            }, {
+              q: "What does 'success' mean??",
+              a: "Başarı",
+            }
+        ],
+        philosophy: [
+          {
+            q: "Düşünüyorum o halde varım sözü kime aittir?",
+            a: "Descartes",
+          }, {
+            q: "Platon veya Eflatun olarak tanınan felsefecinin asıl ismi nedir?",
+            a: "Aristocles",
+          }
+        ],
+      }           
     }
-  }
+  },
+
 })
+

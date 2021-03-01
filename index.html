@@ -8,39 +8,58 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 </head>
 <body>
+
   <div id="app">
     <div class="container">
-    <h4>Choose category</h4>
-    <select name="" id="" v-model="curCategory">
-      <option value="">Choose</option>
-      <option value="history">History</option>
-      <option value="geography">Geography</option>
-      <option value="science">Science</option>
-      <option value="cars">Cars</option>
-    </select>
-      <div class="row" v-if="!finished && curCategory">
-        <h2>Gunluk pratik</h2>
-        <div class="col-4">
-          <div class="card mb-3">
-            <div class="card-body">
+      <br>
+      <h2 class="text-center">Özlem Hoca'nın Soru Kartları</h2>
+      <hr>
+
+
+      <div class="row">
+        <div class="align-items-center d-flex justify-content-center">
+          <div class="card text-center" style="width: 18rem;" v-show="curCategory === '' ">
+            <div class="card-header">
+              Çalışmak istediğiniz kategoriyi seçiniz.
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item list-group-item-action list-group-item-primary" @click="selectCategory(Object.keys(app.questions)[0])">Coğrafya</li>
+              <li class="list-group-item list-group-item-action list-group-item-success" @click="selectCategory(Object.keys(questions)[1])">Tarih</li>
+              <li class="list-group-item list-group-item-action list-group-item-warning" @click="selectCategory(Object.keys(questions)[2])">İngilizce</li>
+              <li class="list-group-item list-group-item-action list-group-item-danger" @click="selectCategory(Object.keys(questions)[3])">Felsefe</li>
+            </ul>
+          </div>    
+        </div>
+      </div>
+
+
+      <div class="row ">  
+        <div class="align-items-center d-flex justify-content-center flex-column">
+          <div class="card mb-3 text-center" v-show="curCategory !== '' ">
+            <div class="card-body " v-if="!finished && curCategory">
               <p class="card-text">{{ questions[curCategory][index[curCategory]].q }}</p>
               <p v-if="isRevealed">{{ questions[curCategory][index[curCategory]].a }}</p>
-              <button class="btn btn-primary" @click="reveal" v-if="!isRevealed">Goster</button>
+              <button class="btn btn-primary" @click="reveal" v-if="!isRevealed">Göster</button>
               <button class="btn btn-success" v-show="isRevealed" @click="remembered">Hatirladim</button>
               <button class="btn btn-danger" v-show="isRevealed" @click="notRemembered">Hatirlayamadim</button>
             </div>
+            <br>
+            <div class="card-body" v-if="finished">
+              <span v-if="!allDone">Bu kategoride günlük pratiğini tamamladın.</span> 
+              <br>
+              <span v-if="allDone">Bütün kategorilerde günlük pratiğini tamamladın.</span>
+            </div>
           </div>
+          <button class="btn btn-secondary " @click.prevent="openFieldsMenu()" v-show="curCategory !== '' && !allDone">Başka bir kategoriye geç.</button>
+          <button class="btn btn-secondary " @click.prevent="openFieldsMenu()" v-show="curCategory !== '' && allDone">Kategoriler sayfasına geri dön.</button>  
         </div>
       </div>
-      <div class="card-body" v-if="finished">
-        Gunluk pratigini tamamladin
-      </div>
-      <div class="card-body" v-if="allDone">
-        Butun kategorileri tamamladin
-      </div>
+
+
     </div>
   </div>
 
   <script src="./app.js"></script>
+
 </body>
 </html>
