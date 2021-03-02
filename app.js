@@ -31,9 +31,11 @@ var app = new Vue({
   },
   watch: {
     isEditCurrent() {
+      this.isDeletedSuccessfully = false
       this.categories = JSON.parse(localStorage.getItem('categories'));
     },
     isGetBack() {
+      this.isDeletedSuccessfully = false
       this.categories = JSON.parse(localStorage.getItem('categories'));
     },
   },
@@ -75,6 +77,7 @@ var app = new Vue({
           this.isGetBack = false
           this.isEditCategoryChosen = false
           this.showEditMenu = false
+          this.isSelectedCategoryEmpty = false
           break;
       }
       if (this.showMainMenu === true) {
@@ -86,6 +89,9 @@ var app = new Vue({
     addToDb(newName) {
       if(!this.categoryNames.includes(newName)) {
         this.categoryNames.push(newName)
+      } else {
+        console.log("HATA")
+        return;
       }
       this.categories[newName] = []
       for (let i = 0; i < this.newQuestionPool.q.length; i++) {
@@ -95,6 +101,11 @@ var app = new Vue({
         console.log(this.categories[newName][i].q)
         console.log(this.categories[newName][i].a)
       }
+      //BURAYA TEKRAR BAK (HATALI KOD)
+      this.newCategoryName = ''
+      this.newQuestionPool = {"q":[],"a":[]}
+      this.isTableShowed = false
+      //-
       this.saveCategoryNames()
       this.saveCategories()
     },
@@ -137,6 +148,7 @@ var app = new Vue({
         this.categories[this.selectedCategory][(this.categories[this.selectedCategory].length)-1].q = this.newQuestion
         this.categories[this.selectedCategory][(this.categories[this.selectedCategory].length)-1].a = this.newAnswer
       } else {
+        this.isTableShowed = true
         console.log("Current Questions --> " +this.newQuestionPool.q)
         console.log("Current Answers --> " +this.newQuestionPool.a)
         this.newQuestionPool.q.push(this.newQuestion)
@@ -171,6 +183,31 @@ var app = new Vue({
         this.showFirstRow = true
       }
     },
+    deleteCategory(x) {
+      if(x === 'D') {
+        this.isSelectedCategoryEmpty = false
+        x = ''
+        return;
+      }
+      delete this.categories[this.selectedCategory]
+      this.categoryNames.splice(this.categoryNames.indexOf(this.selectedCategory),1)
+      this.isEditCurrent = true
+      this.showEditMenu = false
+      this.isEditCategoryChosen = false
+      this.isDeletedSuccessfully = true
+      this.saveCategoryNames()
+      this.saveCategories()
+    },
+    checkException() {
+      if (this.categories[this.selectedCategory].length === 0) {
+        this.isSelectedCategoryEmpty = true
+        console.log("kaydetme basarisiz")
+      } else {
+        this.isSelectedCategoryEmpty = false
+        this.saveCategories()
+        console.log("kaydetme basarili")
+      }
+    },
     reveal() {
       this.isAnswerRevealed = true
     },
@@ -187,6 +224,7 @@ var app = new Vue({
       console.log(this.index);
     },
     selectedCategorySet(name) {
+      this.isDeletedSuccessfully = false
       if(this.categories[name].length === 0) {
         this.showFirstRow = true
       } else {
@@ -201,6 +239,9 @@ var app = new Vue({
         this.showSelectionMenu = false
       }
     },
+    successfullyDelete() {
+      this.isDeletedSuccessfully = false
+    },
     showTable() {
       if(this.isTableShowed === true) {
         this.isTableShowed = false
@@ -212,6 +253,8 @@ var app = new Vue({
   data() {
     return {
       index: 0,
+      isSelectedCategoryEmpty: false,
+      isDeletedSuccessfully: false,
       isGetBack: true,
       isTableShowed: false,
       isPracticeFinished: true,

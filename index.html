@@ -33,6 +33,11 @@
       </div>
       <!-- CATEGORY ADD MENU -->
       <div v-if="showAddMenu">
+        <!-- basarili silme (alert) -->
+        <div v-if="isDeletedSuccessfully" class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{ selectedCategory }} kategorisi</strong> basariyla silinmistir!
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="successfullyDelete"></button>
+        </div>
         <button type="button" class="btn btn-info" @click="editMenuOption('curr')">Mevcut Kartlari Duzenle</button>
         <button type="button" class="btn btn-info" @click="editMenuOption('new')">Yeni Kategori Ekle</button>
         <button class="btn btn-danger" type="button" aria-expanded="true" @click="optionChoosed(6)">Geri don</button><br><br>
@@ -51,12 +56,12 @@
           <input type="text" class="form-control" placeholder="Lutfen eklenecek kategori adini giriniz." v-model="newCategoryName">
         </div>
         <div v-if="isEditCategoryChosen || !isEditCurrent">
-        <div class="input-group mb-3">
-          <span class="input-group-text">Soru</span>
-          <input type="text" class="form-control" placeholder="Lutfen soruyu giriniz." v-model="newQuestion" aria-label="Soru" >
-          <span class="input-group-text">Cevap</span>
-          <input type="text" class="form-control" placeholder="Lutfen cevabi giriniz." v-model="newAnswer" aria-label="Cevap" >
-        </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Soru</span>
+            <input type="text" class="form-control" placeholder="Lutfen soruyu giriniz." v-model="newQuestion" aria-label="Soru" >
+            <span class="input-group-text">Cevap</span>
+            <input type="text" class="form-control" placeholder="Lutfen cevabi giriniz." v-model="newAnswer" aria-label="Cevap" >
+          </div>
           <div class="d-flex justify-content-center">
             <button class="btn btn-success" type="button" id="button-addon2" @click="addNewQuestion">
               Yeni soru ekle
@@ -64,7 +69,26 @@
             <button class="btn btn-primary" type="button" aria-expanded="false" @click="showTable">
               Tabloyu Göster/Gizle
             </button>
+            <button v-if="isEditCurrent" class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop3" @click="deleteCategory('D')">
+              Kategoriyi Sil
+            </button>
           </div><br><br>
+          <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div v-if="!isSelectedCategoryEmpty" class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Kategori Duzenleme</h5>
+                </div>
+                <div class="modal-body">
+                  {{ selectedCategory }} kategorisini <b>silme islemini</b> onaylıyor musunuz ?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="deleteCategory">Onayla</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Iptal et</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <table v-if="isTableShowed" class="table table-hover">
             <thead>
               <tr>
@@ -99,14 +123,63 @@
           </table>
           <br><br>
           <div v-if="isTableShowed && !isEditCurrent" class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" aria-expanded="false" @click="addToDb(newCategoryName)">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop2" @click="addToDb(newCategoryName)">
               Yeni Kategori Ekle
             </button>
           </div>
           <div v-if="isTableShowed && isEditCurrent" class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" aria-expanded="false" @click="saveCategories">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" @click="checkException">
               Kategori Duzenlemeyi Onayla
             </button>
+            <!-- kategori duzenlemeyi onayla (modal) -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <!-- islem basarili -->
+                <div v-if="!isSelectedCategoryEmpty" class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Kategori Duzenleme</h5>
+                  </div>
+                  <div class="modal-body">
+                    Duzenleme islemi <b>basarili.</b><br>Yapılan degisiklikler kaydedilmistir.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Duzenlemeye devam et</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="optionChoosed(6)">Anasayfaya don</button>
+                  </div>
+                </div>
+                <!-- islem basarisiz -->
+                <div v-if="isSelectedCategoryEmpty" class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Kategori Duzenleme</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Duzenleme isleme <b>basarisiz.</b><br>{{ selectedCategory }} kategorisinde hicbir soru bulunmamaktadir!
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Kapat</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- yeni kategori ekle (modal) -->
+            <!-- BURAYA TEKRAR BAK (HATALI KOD) -->
+            <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Yeni Kategori Ekleme</h5>
+                  </div>
+                  <div class="modal-body">
+                    {{ newCategoryName }} kategorisi basariyla eklenmistir.
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" >Yeni kategori ekle</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="optionChoosed(6)">Anasayfaya don</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div><br><br>
         </div>
       </div>
