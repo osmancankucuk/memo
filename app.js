@@ -158,7 +158,32 @@ var app = new Vue({
       }
       this.newQuestion = ''
       this.newAnswer = ''
+      this.newOption = ''
       this.showFirstRow = false
+      this.optionIndex +=1;
+      this.newQuestionPool.o.push([]);
+    },
+    addNewQuestionOption() {
+      if(this.newQuestionPool.o[this.optionIndex].length === 4) {
+        console.log("daha fazla ekleyemezsin")
+        return
+      }
+      if(!this.newAnswer) {
+        //uyari mesaji
+        console.log("Answer bostur")
+        return
+      } else if(!this.newOption) {
+        console.log("Option bostur")
+        return
+      }
+      else {
+        console.log("Bos degil")
+        if(this.newQuestionPool.o[this.optionIndex].length === 0)
+          this.newQuestionPool.o[this.optionIndex].push(this.newAnswer)
+
+        this.newQuestionPool.o[this.optionIndex].push(this.newOption)
+        console.log(this.newQuestionPool.o)
+      }
     },
     deleteCurrentQuestion(item) {
       for (let i = 0; i < this.categories[this.selectedCategory].length; i++) {
@@ -253,6 +278,7 @@ var app = new Vue({
   data() {
     return {
       index: 0,
+      optionIndex:0,
       isSelectedCategoryEmpty: false,
       isDeletedSuccessfully: false,
       isGetBack: true,
@@ -270,11 +296,12 @@ var app = new Vue({
       selectedCategory: "",
       categories: {},
       categoryNames:[],
-      newQuestionPool: {"q":[],"a":[]},
+      newQuestionPool: {"q":[],"a":[],"o":[[]]},
       newAnswerArray: [],
       deletedItem: "",
       newQuestion: null,
       newAnswer: null,
+      newOption: null,
       newCategoryName: '',
       correctAnswer:0
     }
